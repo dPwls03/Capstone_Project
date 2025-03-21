@@ -9,7 +9,7 @@
 
 ✅ 3주차: 백엔드 구축
 - FastAPI 환경 설정
-- SQLite 설정
+- SQLite 설정 및 연동
 
 ✅ 4, 5주차: 백엔드 개발
 - FastAPI에서 Next.js 스타일의 엔드포인트 중심 구조 만들기
