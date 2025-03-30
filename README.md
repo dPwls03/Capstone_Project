@@ -23,7 +23,20 @@
 
 # 🛠️ 기술 스택 🛠️
 
-yolo 모델 - 화재를 실시간으로 감지
-python anaconda - 머신러닝 프로젝트 관리
-next.js - 대시보드
-fastapi - 백엔드
+✅ 프론트엔드 (Frontend)
+Next.js - React 기반의 프레임워크로 서버 사이드 렌더링(SSR)과 정적 사이트 생성(SSG)을 지원.
+
+React (TypeScript) - 사용자 인터페이스 구축을 위한 라이브러리.
+
+✅ 백엔드 (Backend)
+FastAPI (Python) - 고성능 비동기 API 서버 구축을 위한 프레임워크.
+
+SQLite - 경량의 관계형 데이터베이스로, 데이터 저장 및 조회 기능 제공.
+
+✅ AI 모델 (Machine Learning / AI)
+YOLOv11 (PyTorch) - 이미지 인식 및 객체 탐지 모델로, 화재 감지를 위해 활용.
+
+✅ 개발 환경 (Development Environment)
+Conda (Python 가상 환경 관리) - 프로젝트 환경 설정 및 패키지 관리.
+
+Node.js (버전 22 이상) - Next.js 애플리케이션 실행을 위한 런타임 환경.
