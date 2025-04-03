@@ -233,6 +233,96 @@ Body 탭에서 form-data를 선택하고, 키 값으로 file을 추가한 후 �
 
 ## FastAPI를 활용한 정적 파일 서빙
 
+> main.py 코드드
+
+```bash
+from typing import Union
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pathlib import Path
+import importlib
+import pkgutil
+
+import sys
+import os # os 모듈 사용하여 파일 경로 설정
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from app.api.create_user.router import router as create_user_router
+from app.api.get_test.router import router as get_test_router
+
+from app.db.database import engine, Base
+from app.db.models import (
+    user as user_model,
+    session as session_model,
+    detection_log as detection_log_model,
+)
+
+# FastAPI에서 정적 파일 서빙 모듈
+from fastapi.staticfiles import StaticFiles
+
+
+def init_db():
+    Base.metadata.create_all(bind=engine)
+
+
+from contextlib import asynccontextmanager
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+api_dir = Path(__file__).parent / "api"
+
+for api in api_dir.iterdir():
+    if api.is_dir(): 
+        router_module = f"app.api.{api.name}.router"
+        try:
+            module = importlib.import_module(router_module)
+            if hasattr(module, "router"):
+                app.include_router(module.router)
+                print(f"✅ router added: {router_module}")  # debug
+        except ModuleNotFoundError:
+            if api.name == "__pycache__" or api.name == "__init__":
+                continue
+            print(f"⚠️ {router_module} not found (router.py is missing)")
+
+
+log_directory = os.path.join(os.path.dirname(__file__), "log")
+
+# log 폴더가 없으면 생성
+if not os.path.exists(log_directory):
+    os.makedirs(log_directory)
+
+app.mount("/log", StaticFiles(directory=log_directory), name="log")
+```
+> FastAPI 서버 실행 시 log 폴더에 있는 이미지 파일 외부에서 접근
+
+```bash
+http://localhost:8000/log/filename
+```
+
+```
+일반적으로 AWS와 같은 클라우드 서비스를 사용하여 이미지를 서방할 때는 보안 설정을 통해 접근을 제한한다.
+
+예를 들어, 특정 IP 주소나 도메인에서만 접근할 수 있도록 설정하거나, 인증된 사용자만 파일에 접근할 수 있도록 제한한다.
+
+이러한 보안 설정은 데이터의 무단 접근을 방지하고, 서비스의 안정성을 높이는 데 필수적이다.
+```
+
 ## 화재 감지 로그 저장 및 개선된 DB 구조 반영하기
 
 ## 화재 감지 로그 조회 API 구현
