@@ -233,7 +233,7 @@ Body 탭에서 form-data를 선택하고, 키 값으로 file을 추가한 후 �
 
 ## FastAPI를 활용한 정적 파일 서빙
 
-> main.py 코드드
+> main.py 코드
 
 ```bash
 from typing import Union
