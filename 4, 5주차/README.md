@@ -7,7 +7,7 @@
 
 > argon2 가상환경에 설치
 
-비밀번호 해싱을 위하여 'argon2' 사용
+비밀번호 해싱을 위하여 `argon2` 사용
 
 ```bash
 python -Im pip install argon2-cffi
@@ -26,9 +26,10 @@ python -Im pip install argon2-cffi
 > 🔗 참고 자료  
 - [Postman](https://www.postman.com/)
 
-> router.py 파일, schema.py 파일
+> 파일 생성
 
-router.py 파일
+`router.py`
+
 ```bash
 # 필요한 모듈 임포트
 import uuid # 고유 식별자 생성
@@ -46,7 +47,6 @@ import time
 import cv2 # 이미지 처리
 
 from app.api.predict_fire.crud import create_detection_log
-
 
 router = APIRouter()
 
@@ -70,7 +70,6 @@ def generate_random_file_name(filename: str) -> str:
     _, file_extension = os.path.splitext(filename)
     random_file_name = f"{uuid.uuid4()}{file_extension}"
     return random_file_name
-
 
 @router.post("/predict_fire", response_model=PredictFireSchema)
 async def predict_fire(
@@ -190,18 +189,17 @@ async def predict_fire(
         #         logger.error(f"Failed to delete temp file: {str(e)}")
 ```
 
-schema.py (응답 데이터의 타입 정의 역할)
+`schema.py` (응답 데이터의 타입 정의 역할)
+
 ```bash
 from pydantic import BaseModel
 from typing import List, Dict, Any, Union
-
 
 # 이미지 처리 결과의 단일 탐지 정보 모델
 class Detection(BaseModel):
     class_name: str
     confidence: float
     bbox: List[float]
-
 
 class PredictFireSchema(BaseModel):
     message: str
@@ -220,11 +218,13 @@ class PredictFireSchema(BaseModel):
 ```
 
 ![postman](./img/postman2.png)
+
 ```
 Body 탭에서 form-data를 선택하고, 키 값으로 file을 추가한 후 파일 타입을 File로 설정
 ```
 
 ![postman](./img/postman3.png)
+
 ```
 테스트할 이미지 파일을 선택한 후 Send 버튼을 누르면 서버로 파일이 전송되어 처리 결과가 JSON 형식으로 응답
 
@@ -233,7 +233,7 @@ Body 탭에서 form-data를 선택하고, 키 값으로 file을 추가한 후 �
 
 ## FastAPI를 활용한 정적 파일 서빙
 
-> main.py 코드
+> `main.py` 코드
 
 ```bash
 from typing import Union
@@ -260,19 +260,15 @@ from app.db.models import (
 # FastAPI에서 정적 파일 서빙 모듈
 from fastapi.staticfiles import StaticFiles
 
-
 def init_db():
     Base.metadata.create_all(bind=engine)
 
-
 from contextlib import asynccontextmanager
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
     yield
-
 
 app = FastAPI(lifespan=lifespan)
 
@@ -283,7 +279,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 api_dir = Path(__file__).parent / "api"
 
@@ -300,7 +295,6 @@ for api in api_dir.iterdir():
                 continue
             print(f"⚠️ {router_module} not found (router.py is missing)")
 
-
 log_directory = os.path.join(os.path.dirname(__file__), "log")
 
 # log 폴더가 없으면 생성
@@ -309,6 +303,7 @@ if not os.path.exists(log_directory):
 
 app.mount("/log", StaticFiles(directory=log_directory), name="log")
 ```
+
 > FastAPI 서버 실행 시 log 폴더에 있는 이미지 파일 외부에서 접근
 
 ```bash
@@ -325,5 +320,92 @@ http://localhost:8000/log/filename
 
 ## 화재 감지 로그 저장 및 개선된 DB 구조 반영하기
 
+> 🔗 참고 자료 
+- [SQLAlchemy](https://docs.sqlalchemy.org/en/20/orm/session_api.html)
+
+> 화재 감지 데이터 DB에 로깅
+
+`crud.py` 파일 추가
+
+```bash
+from sqlalchemy.orm import Session
+from app.db.models.detection_log import DetectionLog
+
+def create_detection_log(db: Session, detection_data: dict):
+    detections_list = [
+        {"class_name": d.class_name, "confidence": d.confidence, "bbox": d.bbox}
+        for d in detection_data["detections"]
+    ]
+    db_log = DetectionLog(
+        file_name=detection_data["file_name"],
+        result_image=detection_data["result_image"],
+        detections=detections_list,
+        message=detection_data["message"],
+        has_fire=any(d.class_name == "fire" for d in detection_data["detections"]),
+    )
+    db.add(db_log)
+    db.commit()
+    db.refresh(db_log)
+    return db_log
+
+```
+
+```
+감지된 데이터를 가공한 후, 데이터베이스에 저장한다.
+
+add()는 객체를 세션에 추가, 실제 반영은 'commit()' 이후에 이루어진다.
+
+commit()은 변경 사항을 데이터베이스에 저장한다.
+
+refresh()는 데이터베이스에서 최신 데이터를 다시 불러와 객체를 업데이트 한다.
+```
+
+> DB 구조 개선 후 화재 감지 데이터 기록
+
+![db](./img/db.png)
+![postman](./img/postman4.png)
+
+```
+DB 구조 개선 후 Postman으로 'predict_fire' 엔드포이트에 요청을 보내서 화재 감지 데이터 기록
+```
+
+![postman](./img/postman5.png)
+
+```
+detection_logs를 보면 데이터가 기록된 것을 확인할 수 있다.
+```
+
 ## 화재 감지 로그 조회 API 구현
 
+> 화재 감지 로그를 페이지네이션 처리하여 조회하는 API를 구현
+
+```
+`router.py`는 서비스 로직을 조립하여, 'crud'와 'schema'의 내용을 순서대로 호출한다.
+
+`crud.py`'는 데이터베이스에서 테이블의 데이터를 검색하기 위한 쿼리 객체를 생성하고, 원하는 데이터를 효율적으로 가져올 수 있도록 준비하는 과정이다.
+
+`schema.py`는 API의 반환 타입을 정의한다.
+
+추가적으로 모델을 공통적으로 사용해야 하므로 `share_schema` 파일에 정의한다.
+
+```
+
+> Postman으로 API 테스트
+
+![test](./img/test1.png)
+
+```
+화재 감지 API를 실행하여 미리 데이터 추가
+```
+
+![test](./img/test2.png)
+
+```
+Postman에서 요청 URL에 서버 주소와 /get_detection_log 엔드포인트 입력
+```
+
+![test](./img/test3.png)
+
+```
+Params 탭에서 키 값으로 'page', 'page_size', 'filter을 추가한 후 값을 조정하여 페이지네이션 동작 확인
+```
