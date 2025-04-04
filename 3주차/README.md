@@ -11,12 +11,13 @@
 pip install "fastapi[standard]"
 ```
 
-> backend 폴더에서 app 폴더 생성 및 main.py 파일 생성
+> backend 폴더에서 app 폴더 생성 및 `main.py` 파일 생성
+
 ```
-- 코드 편집기 확장 프로그램 "Black Formatter" 설치
+- 코드 편집기 확장 프로그램 'Black Formatter' 설치
 ```
 
-main.py
+`main.py`
 
 ```bash
 from typing import Union
@@ -25,11 +26,9 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
-
 
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: Union[str, None] = None):
@@ -38,6 +37,7 @@ def read_item(item_id: int, q: Union[str, None] = None):
 ```
 
 > 개발용 서버 실행하기
+
 ```bash
 fastapi dev app/main.py
 ```
@@ -54,7 +54,8 @@ FastApi에서는 sqlalchemy라는 도구를 사용해서 데이터 베이스와 
 pip install SQLAlchemy
 ```
 
->database.py 파일 만들기
+> `database.py` 파일 만들기
+
 ```bash
 import os
 from sqlalchemy import create_engine
@@ -101,12 +102,14 @@ def get_db():
 ```
 
 > model 정의(테이블의 구조 정의)
+
 ```
 - models라는 폴더 생성
 - user, session, detection_log 테이블 정의
 ```
 
-user 정보 담는 user.py
+user 정보 담는 `user.py`
+
 ```bash
 import random
 import string
@@ -137,7 +140,8 @@ class User(Base):
     # detection_logs = relationship("DetectionLog", back_populates="user")
 ```
 
-세션 정보 담는 session.py
+세션 정보 담는 `session.py`
+
 ```bash
 from sqlalchemy import Column, Integer, DateTime, JSON, String
 from sqlalchemy.sql import func
@@ -165,7 +169,8 @@ class Session(Base):
     expires_at = Column(DateTime(timezone=True))
 ```
 
-화재 감지된 데이터를 담는 detection_log.py
+화재 감지된 데이터를 담는 `detection_log.py`
+
 ```bash
 from sqlalchemy import (
     Boolean,
@@ -203,9 +208,9 @@ class DetectionLog(Base):
     # user = relationship("User", back_populates="detection_logs")
 ```
 
-> main.py 파일에서 정의된 데이터베이스 초기화
+> `main.py` 파일에서 정의된 데이터베이스 초기화
 
-main.py
+`main.py`
 
 ```bash
 from typing import Union
@@ -245,9 +250,10 @@ def read_item(item_id: int, q: Union[str, None] = None):
 ```
 
 > sql_app.db 생성
+
 ```
-main.py 설정 후 재시작
-확장프로그램 "SQLite" 설치
+`main.py` 설정 후 재시작
+확장프로그램 'SQLite' 설치
 command palette에서 SQLite 메뉴 중 opend database 선택
 sql_app.db 파일 선택
 ```
