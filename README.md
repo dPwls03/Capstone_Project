@@ -1,10 +1,24 @@
-# Capstone Design
+# 🔥 Capstone Design - 화재 감지 시스템 🔥
 
-# 🔥 화재 감지 시스템 🔥
+## 🚀 프로젝트 설명 🚀
 
-## 🚀 프로젝트 개요 🚀
+AI 기술과 웹 개발 기술을 접목한 실시간 화재 감지 시스템 구축을 목표로 합니다.
 
-## 프로젝트 설명
+초기 화재 상황을 신속하게 파악하고, 경고 시스템을 통한 빠른 대응으로 안전 관리를 실현하는 것을 목적으로 합니다.
+
+딥러닝과 웹 개발을 결합하여 실시간 화재 감지 및 알림 시스템을 구현하는 실전 기반 강의 프로젝트입니다.
+
+```
+화재 감지 AI 모델: 사전 학습된 YOLO 모델을 활용해 이미지에서 화재를 탐지하고, 직접 모델 학습 및 커스터마이징 방법도 학습
+
+백엔드 API 구축: FastAPI를 통해 간단하면서도 효율적인 API 서버를 구축하여, 감지된 데이터를 처리 및 전달
+
+실시간 데이터 연동: Next.js와 TanStack Query를 이용해 주기적으로 데이터를 요청(폴링)하고, 대시보드 형태로 실시간 감지 로그 및 경고 메시지를 표시
+
+데이터 저장 및 관리: SQLite를 활용하여 감지된 화재 데이터를 CRUD 방식으로 저장하고, 필요 시 조회할 수 있는 기능을 구현
+
+경고 시스템 구현: 감지 시 오디오 알람과 웹 알림을 통해 즉각적인 경고를 제공하여, 신속한 대처가 가능하도록 설계
+```
 
 ## 📅 프로젝트 계획 📅
 
@@ -23,19 +37,13 @@
 # 🛠️ 기술 스택 🛠️
 
 ✅ 프론트엔드 (Frontend)
-Next.js - React 기반의 프레임워크로 서버 사이드 렌더링(SSR)과 정적 사이트 생성(SSG)을 지원.
 
-React (TypeScript) - 사용자 인터페이스 구축을 위한 라이브러리.
+- <img src="https://img.shields.io/badge/React-61DAFB.svg?style=for-the-badge&logo=React&logoColor=white" /> <img src="https://img.shields.io/badge/Next.js-000000.svg?style=for-the-badge&logo=Next.js&logoColor=white" />
 
 ✅ 백엔드 (Backend)
-FastAPI (Python) - 고성능 비동기 API 서버 구축을 위한 프레임워크.
 
-SQLite - 경량의 관계형 데이터베이스로, 데이터 저장 및 조회 기능 제공.
+- <img src="https://img.shields.io/badge/FastAPI-009688.svg?style=for-the-badge&logo=FastAPI&logoColor=white" /> <img src="https://img.shields.io/badge/SQLite-003B57.svg?style=for-the-badge&logo=SQLite&logoColor=white" />
 
 ✅ AI 모델 (Machine Learning / AI)
-YOLOv11 (PyTorch) - 이미지 인식 및 객체 탐지 모델로, 화재 감지를 위해 활용.
 
-✅ 개발 환경 (Development Environment)
-Conda (Python 가상 환경 관리) - 프로젝트 환경 설정 및 패키지 관리.
-
-Node.js (버전 22 이상) - Next.js 애플리케이션 실행을 위한 런타임 환경.
+- <img src="https://img.shields.io/badge/YOLO-111F68.svg?style=for-the-badge&logo=YOLO&logoColor=white" />
