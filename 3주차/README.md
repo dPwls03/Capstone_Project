@@ -5,7 +5,7 @@
 > 🔗 참고 자료  
 - [FastAPI](https://fastapi.tiangolo.com/ko/)
 
-> 가상환경에서 FastAPI 설치 밒 코드 편집기 실행
+> 가상환경에서 FastAPI 설치 및 코드 편집기 실행
 
 ```bash
 pip install "fastapi[standard]"
